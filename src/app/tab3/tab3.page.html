@@ -1,17 +1,89 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="ipod-container">
+  <!-- Hidden YouTube Player -->
+  <div id="youtube-player" style="display: none;"></div>
+  
+  <!-- iPod Classic Interface -->
+  <div class="ipod">
+    <div class="screen">
+      <!-- Main Menu Screen -->
+      <div class="main-menu" 
+           *ngIf="currentScreen === 'main'" 
+           [class.screen-enter]="currentScreen === 'main' && !isTransitioning">
+        <div class="menu-header">iPod</div>
+        <div class="menu-list">
+          <div class="menu-item" 
+               *ngFor="let item of mainMenuItems; let i = index"
+               [class.selected]="i === selectedMainMenuItem">
+            <span class="menu-text">{{ item }}</span>
+            <span class="menu-arrow" *ngIf="item !== 'Shuffle Songs'">▶</span>
+          </div>
+        </div>
+      </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+      <!-- Music Menu Screen -->
+      <div class="music-menu" 
+           *ngIf="currentScreen === 'music'" 
+           [class.screen-enter]="currentScreen === 'music' && !isTransitioning">
+        <div class="menu-header">Music</div>
+        <div class="menu-list">
+          <div class="menu-item" 
+               *ngFor="let item of musicMenuItems; let i = index"
+               [class.selected]="i === selectedMusicMenuItem">
+            <span class="menu-text">{{ item }}</span>
+            <span class="menu-arrow">▶</span>
+          </div>
+        </div>
+      </div>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+      <!-- Songs List Screen -->
+      <div class="songs-list" 
+           *ngIf="currentScreen === 'songs'" 
+           [class.screen-enter]="currentScreen === 'songs' && !isTransitioning">
+        <div class="menu-header">Songs</div>
+        <div class="menu-list">
+          <div class="menu-item" 
+               *ngFor="let song of songs; let i = index"
+               [class.selected]="i === selectedSongIndex">
+            <span class="menu-text">{{ song.title }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Now Playing Screen -->
+      <div class="now-playing" 
+           *ngIf="currentScreen === 'now-playing'" 
+           [class.screen-enter]="currentScreen === 'now-playing' && !isTransitioning">
+        <div class="now-playing-header">
+          <span class="play-icon">▶</span>
+          <span class="header-text">Now Playing</span>
+        </div>
+        
+        <div class="track-counter">{{ currentSongIndex + 1 }} of {{ songs.length }}</div>
+        
+        <div class="song-info">
+          <h2 class="song-title">{{ currentSong.title }}</h2>
+          <p class="song-artist">{{ currentSong.artist }}</p>
+          <p class="song-album">{{ currentSong.album }}</p>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-container">
+          <div class="progress-bar" (click)="seekTo($event)">
+            <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+          </div>
+          <div class="time-display">
+            <span>{{ formatTime(currentTime) }}</span>
+            <span>-{{ formatTime(duration - currentTime) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <span class="menu" (click)="goBack()">MENU</span>
+      <div class="next" (click)="onWheelScroll('down')"></div>
+      <div class="play" (click)="onWheelClick()"></div>
+      <div class="previous" (click)="onWheelScroll('up')"></div>
+    </div>
+  </div>
 </ion-content>

@@ -1,0 +1,500 @@
+//
+// Main Sass file
+//
+
+// Variables
+$body-color: #b4bcc5;
+
+// Container styles
+.ipod-container {
+  background: #f5f5f5;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+// Styles
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.ipod {
+  margin: 5% auto;
+  width: 20em;
+  height: 30em;
+  background: #dadada;
+  border-radius: 1.3em;
+  box-shadow: inset 0 0 2.4em #555;
+  .screen {
+    position: relative;
+    top: .9em;
+    margin: 0 auto;
+    width: 18em;
+    height: 12em;
+    background: #ffffff;
+    border-radius: .3125em;
+    color: #000;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    border: 2px solid #333;
+    
+    // Status Bar
+    &::before {
+      content: "Now Playing";
+      position: absolute;
+      top: 0.2em;
+      left: 0.5em;
+      font-size: 0.7em;
+      font-weight: bold;
+      color: #000;
+      z-index: 3;
+    }
+    
+    // Battery Icon (right side of status bar)
+    &::after {
+      content: "🔋";
+      position: absolute;
+      top: 0.15em;
+      right: 0.5em;
+      font-size: 0.8em;
+      z-index: 3;
+    }
+    
+    // Common menu styles with smooth transitions
+    .main-menu, .music-menu, .songs-list {
+      position: absolute;
+      top: 1.2em;
+      left: 0.5em;
+      right: 0.5em;
+      bottom: 0.5em;
+      z-index: 2;
+      
+      // Screen transition animations
+      &.screen-enter {
+        animation: slideInRight 0.4s ease-out;
+      }
+      
+      &.screen-exit {
+        animation: slideOutLeft 0.3s ease-in;
+      }
+      
+      .menu-header {
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 0.5em;
+        padding: 0 0.3em;
+        animation: fadeInDown 0.5s ease-out 0.1s both;
+      }
+      
+      .menu-list {
+        .menu-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.4em 0.3em;
+          margin-bottom: 0.1em;
+          font-size: 0.7em;
+          color: #000;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          animation: fadeInUp 0.4s ease-out both;
+          
+          // Staggered animation for menu items
+          @for $i from 1 through 10 {
+            &:nth-child(#{$i}) {
+              animation-delay: #{0.1 + ($i * 0.05)}s;
+            }
+          }
+          
+          &:hover {
+            background: rgba(0, 122, 255, 0.1);
+            transform: translateX(0.1em);
+          }
+          
+          &.selected {
+            background: #007AFF;
+            color: #fff;
+            border-radius: 0.1em;
+            transform: translateX(0.2em);
+            box-shadow: 0 0.1em 0.3em rgba(0, 122, 255, 0.3);
+          }
+          
+          .menu-text {
+            flex: 1;
+            transition: all 0.2s ease;
+          }
+          
+          .menu-arrow {
+            font-size: 0.6em;
+            color: inherit;
+            transition: transform 0.2s ease;
+          }
+          
+          &:hover .menu-arrow {
+            transform: translateX(0.1em);
+          }
+        }
+      }
+    }
+
+    // Now Playing Screen with smooth transitions
+    .now-playing {
+      position: absolute;
+      top: 1.2em;
+      left: 0.5em;
+      right: 0.5em;
+      bottom: 0.5em;
+      display: flex;
+      flex-direction: column;
+      z-index: 2;
+      
+      // Screen transition animations
+      &.screen-enter {
+        animation: fadeInScale 0.6s ease-out;
+      }
+      
+      .now-playing-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5em;
+        animation: fadeInDown 0.5s ease-out 0.1s both;
+        
+        .play-icon {
+          font-size: 0.7em;
+          color: #007AFF;
+          margin-right: 0.3em;
+          animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .header-text {
+          font-size: 0.8em;
+          font-weight: bold;
+          color: #000;
+        }
+      }
+      
+      .track-counter {
+        font-size: 0.6em;
+        color: #666;
+        margin-bottom: 0.8em;
+        padding: 0 0.3em;
+        animation: fadeInUp 0.5s ease-out 0.2s both;
+      }
+      
+      .song-info {
+        margin-bottom: auto;
+        padding: 0 0.3em;
+        animation: fadeInUp 0.5s ease-out 0.3s both;
+        
+        .song-title {
+          font-size: 0.9em;
+          font-weight: bold;
+          margin: 0 0 0.3em 0;
+          color: #000;
+          transition: all 0.3s ease;
+        }
+        
+        .song-artist {
+          font-size: 0.7em;
+          color: #000;
+          margin: 0 0 0.2em 0;
+          font-weight: 400;
+          transition: all 0.3s ease;
+        }
+        
+        .song-album {
+          font-size: 0.6em;
+          color: #000;
+          margin: 0;
+          font-weight: 400;
+          transition: all 0.3s ease;
+        }
+      }
+      
+      .progress-container {
+        margin-top: auto;
+        padding: 0 0.3em;
+        animation: fadeInUp 0.5s ease-out 0.4s both;
+        
+        .progress-bar {
+          width: 100%;
+          height: 0.4em;
+          background: #e0e0e0;
+          border-radius: 0.2em;
+          margin-bottom: 0.3em;
+          overflow: hidden;
+          cursor: pointer;
+          position: relative;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            background: #d0d0d0;
+            transform: scaleY(1.2);
+          }
+          
+          .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007AFF, #00A8FF);
+            border-radius: 0.2em;
+            transition: width 0.3s ease;
+            position: relative;
+            
+            &::after {
+              content: "";
+              position: absolute;
+              right: -0.1em;
+              top: -0.1em;
+              width: 0.6em;
+              height: 0.6em;
+              background: #007AFF;
+              border-radius: 50%;
+              border: 2px solid #fff;
+              box-shadow: 0 0 0.2em rgba(0, 122, 255, 0.5);
+            }
+          }
+        }
+        
+        .time-display {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.6em;
+          color: #666;
+          font-weight: 400;
+          transition: all 0.3s ease;
+        }
+      }
+    }
+  }
+  .controls {
+    margin: 3.9em auto;
+    width: 11em;
+    height: 11em;
+    border: 3.5em solid #fff;
+    border-radius: 50%;
+    box-shadow: inset 0 1em 3em #aaa;
+    box-shadow: 0 0 .1em #999;
+    .menu {
+      position: relative;
+      top: -2.8em;
+      left: .5em;
+      font: 300 100% sans-serif;
+      color: $body-color;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      
+      &:hover {
+        color: #007AFF;
+      }
+    }
+    .next {
+      position: relative;
+      top: .4em;
+      left: 5.3em;
+      width: 0;
+      height: 0;
+      border-top: .35em solid transparent;
+      border-bottom: .35em solid transparent;
+      border-left: .7em solid $body-color;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      
+      &:hover {
+        border-left-color: #007AFF;
+      }
+      
+      &::before {
+        content: "";
+        position: absolute;
+        top: -.3em;
+        left: 0;
+        border-top: .35em solid transparent;
+        border-bottom: .35em solid transparent;
+        border-left: .7em solid $body-color;
+        transition: border-color 0.2s ease;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        top: -.3em;
+        left: .65em;
+        width: .14em;
+        height: .6em;
+        background: $body-color;
+        transition: background 0.2s ease;
+      }
+      
+      &:hover::before {
+        border-left-color: #007AFF;
+      }
+      
+      &:hover::after {
+        background: #007AFF;
+      }
+    }
+    .play {
+      position: relative;
+      top: 4.5em;
+      left: 1.5em;
+      width: 0;
+      height: 0;
+      border-top: .35em solid transparent;
+      border-bottom: .35em solid transparent;
+      border-left: .7em solid $body-color;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      
+      &:hover {
+        border-left-color: #007AFF;
+      }
+      
+      &::before {
+        content: "";
+        position: absolute;
+        top: -.3em;
+        left: .5em;
+        width: .14em;
+        height: .6em;
+        background: $body-color;
+        transition: background 0.2s ease;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        top: -.3em;
+        left: .25em;
+        width: .14em;
+        height: .6em;
+        background: $body-color;
+        transition: background 0.2s ease;
+      }
+      
+      &:hover::before,
+      &:hover::after {
+        background: #007AFF;
+      }
+    }
+    .previous {
+      position: relative;
+      top: -.7em;
+      left: -2.0em;
+      width: 0;
+      height: 0;
+      border-top: .35em solid transparent;
+      border-right: .7em solid $body-color;
+      border-bottom: .35em solid transparent;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      
+      &:hover {
+        border-right-color: #007AFF;
+      }
+      
+      &::before {
+        content: "";
+        position: absolute;
+        top: -.3em;
+        left: -.7em;
+        border-top: .35em solid transparent;
+        border-right: .7em solid $body-color;
+        border-bottom: .35em solid transparent;
+        transition: border-color 0.2s ease;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        top: -.3em;
+        left: -0.8em;
+        width: .14em;
+        height: .65em;
+        background: $body-color;
+        transition: background 0.2s ease;
+      }
+      
+      &:hover::before {
+        border-right-color: #007AFF;
+      }
+      
+      &:hover::after {
+        background: #007AFF;
+      }
+    }
+  }
+}
+
+// Keyframe animations for smooth transitions
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInDown {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInScale {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+// Smooth screen transitions
+.screen {
+  .main-menu, .music-menu, .songs-list, .now-playing {
+    transition: all 0.3s ease;
+  }
+}
