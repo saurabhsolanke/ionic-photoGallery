@@ -35,13 +35,14 @@ export class Tab3Page implements OnInit, OnDestroy {
   currentScreen: 'main' | 'music' | 'songs' | 'now-playing' = 'main';
   previousScreen: 'main' | 'music' | 'songs' | 'now-playing' = 'main';
   isTransitioning = false;
+  isSongChanging = false;
   
   // Main menu items
   mainMenuItems = ['Music', 'Photos', 'Videos', 'Extras', 'Settings', 'Shuffle Songs'];
   selectedMainMenuItem = 0;
   
   // Music menu items
-  musicMenuItems = ['Playlists', 'Artists', 'Albums', 'Songs', 'Genres', 'Composers', 'Audiobooks'];
+  musicMenuItems = ['Songs','Playlists', 'Artists', 'Albums', 'Genres', 'Composers', 'Audiobooks'];
   selectedMusicMenuItem = 0;
   
   // Songs list
@@ -105,7 +106,7 @@ export class Tab3Page implements OnInit, OnDestroy {
       artist: "Calvin Harris",
       album: "Summer",
       duration: "4:54",
-      artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center",
+      artwork: "https://m.media-amazon.com/images/I/71l8d8YhIRL._UF894,1000_QL80_.jpg",
       url: "https://www.youtube.com/watch?v=ebXbLfLACGM",
       videoId: "ebXbLfLACGM"
     }
@@ -293,6 +294,38 @@ export class Tab3Page implements OnInit, OnDestroy {
     }
   }
 
+  // Next button handler
+  onNextClick() {
+    if (this.isTransitioning) return;
+    
+    switch (this.currentScreen) {
+      case 'main':
+      case 'music':
+      case 'songs':
+        this.onWheelScroll('down');
+        break;
+      case 'now-playing':
+        this.nextSong();
+        break;
+    }
+  }
+
+  // Previous button handler
+  onPreviousClick() {
+    if (this.isTransitioning) return;
+    
+    switch (this.currentScreen) {
+      case 'main':
+      case 'music':
+      case 'songs':
+        this.onWheelScroll('up');
+        break;
+      case 'now-playing':
+        this.previousSong();
+        break;
+    }
+  }
+
   // Music player controls
   togglePlayPause() {
     if (this.player) {
@@ -305,13 +338,73 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   previousSong() {
+    if (this.isSongChanging) return;
     this.currentSongIndex = (this.currentSongIndex - 1 + this.songs.length) % this.songs.length;
-    this.loadNewSong();
+    this.changeSongWithAnimation();
   }
 
   nextSong() {
+    if (this.isSongChanging) return;
     this.currentSongIndex = (this.currentSongIndex + 1) % this.songs.length;
-    this.loadNewSong();
+    this.changeSongWithAnimation();
+  }
+
+  // Animated song change method with carousel effect
+  private changeSongWithAnimation() {
+    this.isSongChanging = true;
+    
+    // Apply carousel animation
+    this.applyCarouselEffect();
+    
+    // Load new song after animation starts
+    setTimeout(() => {
+      this.loadNewSong();
+      
+      // Reset animation state
+      setTimeout(() => {
+        this.isSongChanging = false;
+        this.resetCarouselEffect();
+      }, 500);
+    }, 250);
+  }
+
+  // Apply carousel-style 3D effect
+  private applyCarouselEffect() {
+    const songs = this.songs;
+    const currentIndex = this.currentSongIndex;
+    
+    // Apply effects to songs based on their position relative to current
+    songs.forEach((song, index) => {
+      const distance = index - currentIndex;
+      
+      if (distance === 0) {
+        // Current song - center position
+        this.setSongTransform(index, 'none', 1, 1, 'none', 1);
+      } else if (distance > 0) {
+        // Songs to the right
+        const scale = Math.max(0.6, 1 - 0.2 * distance);
+        const translateX = 120 * distance;
+        const opacity = distance > 2 ? 0 : 0.6;
+        this.setSongTransform(index, `translateX(${translateX}px) scale(${scale}) perspective(16px) rotateY(-1deg)`, -distance, scale, 'blur(5px)', opacity);
+      } else {
+        // Songs to the left
+        const scale = Math.max(0.6, 1 - 0.2 * Math.abs(distance));
+        const translateX = 120 * distance;
+        const opacity = Math.abs(distance) > 2 ? 0 : 0.6;
+        this.setSongTransform(index, `translateX(${translateX}px) scale(${scale}) perspective(16px) rotateY(1deg)`, distance, scale, 'blur(5px)', opacity);
+      }
+    });
+  }
+
+  // Set transform properties for a song
+  private setSongTransform(index: number, transform: string, zIndex: number, scale: number, filter: string, opacity: number) {
+    // This will be used to apply CSS transforms dynamically
+    // For now, we'll use CSS classes to achieve the effect
+  }
+
+  // Reset carousel effect
+  private resetCarouselEffect() {
+    // Reset all transforms when animation completes
   }
 
   private loadNewSong() {
